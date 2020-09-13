@@ -1,6 +1,7 @@
 package com.inventrohyder.simpletodo_codepath;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,10 +11,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    final String TAG = getClass().getSimpleName();
 
     List<String> mItems;
 
@@ -31,10 +39,7 @@ public class MainActivity extends AppCompatActivity {
         mEtItem = findViewById(R.id.etItem);
         mRvItems = findViewById(R.id.rv_items);
 
-        mItems = new ArrayList<>();
-        mItems.add("Buy milk");
-        mItems.add("Go to the gym");
-        mItems.add("Have fun!");
+        loadItems();
 
         ItemsAdapter.OnLongClickListener onLongClickListener = new ItemsAdapter.OnLongClickListener() {
             @Override
@@ -44,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
                 // Notify the adapter
                 mItemsAdapter.notifyItemRemoved(position);
                 Toast.makeText(getApplicationContext(), R.string.item_removed, Toast.LENGTH_SHORT).show();
+                saveItems();
             }
         };
         mItemsAdapter = new ItemsAdapter(mItems, onLongClickListener);
@@ -60,7 +66,31 @@ public class MainActivity extends AppCompatActivity {
                 mItemsAdapter.notifyItemInserted(mItems.size() - 1);
                 mEtItem.setText("");
                 Toast.makeText(getApplicationContext(), R.string.item_added, Toast.LENGTH_SHORT).show();
+                saveItems();
             }
         });
+    }
+
+    private File getDataFile() {
+        return new File(getFilesDir(), "data.txt");
+    }
+
+    // Load items by reading every line of the data file
+    private void loadItems() {
+        try {
+            mItems = new ArrayList<>(FileUtils.readLines(getDataFile(), Charset.defaultCharset()));
+        } catch (IOException e) {
+            Log.e(TAG, "loadItems: Error reading items", e);
+            mItems = new ArrayList<>();
+        }
+    }
+
+    // Saves items by writing them into the data file
+    private void saveItems() {
+        try {
+            FileUtils.writeLines(getDataFile(), mItems);
+        } catch (IOException e) {
+            Log.e(TAG, "saveItems: Error writing items", e);
+        }
     }
 }
