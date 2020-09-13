@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     Button mBtnAdd;
     EditText mEtItem;
     RecyclerView mRvItems;
+    private ItemsAdapter mItemsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +36,18 @@ public class MainActivity extends AppCompatActivity {
         mItems.add("Go to the gym");
         mItems.add("Have fun!");
 
-        final ItemsAdapter itemsAdapter = new ItemsAdapter(mItems);
-        mRvItems.setAdapter(itemsAdapter);
+        ItemsAdapter.OnLongClickListener onLongClickListener = new ItemsAdapter.OnLongClickListener() {
+            @Override
+            public void onItemLongClicked(int position) {
+                // Delete the item from the model
+                mItems.remove(position);
+                // Notify the adapter
+                mItemsAdapter.notifyItemRemoved(position);
+                Toast.makeText(getApplicationContext(), R.string.item_removed, Toast.LENGTH_SHORT).show();
+            }
+        };
+        mItemsAdapter = new ItemsAdapter(mItems, onLongClickListener);
+        mRvItems.setAdapter(mItemsAdapter);
         mRvItems.setLayoutManager(new LinearLayoutManager(this));
 
         mBtnAdd.setOnClickListener(new View.OnClickListener() {
@@ -46,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                 // Add item to the model
                 mItems.add(todoItem);
                 // Notify adapter that an item is inserted
-                itemsAdapter.notifyItemInserted(mItems.size() - 1);
+                mItemsAdapter.notifyItemInserted(mItems.size() - 1);
                 mEtItem.setText("");
                 Toast.makeText(getApplicationContext(), R.string.item_added, Toast.LENGTH_SHORT).show();
             }

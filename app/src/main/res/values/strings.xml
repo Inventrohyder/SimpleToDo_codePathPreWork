@@ -3,4 +3,5 @@
     <string name="add">Add</string>
     <string name="add_and_item_here">Add and Item here</string>
     <string name="item_added">Item was added</string>
+    <string name="item_removed">Item was removed</string>
 </resources>
