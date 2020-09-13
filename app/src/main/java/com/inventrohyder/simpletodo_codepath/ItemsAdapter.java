@@ -13,15 +13,13 @@ import java.util.List;
 class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> {
 
     OnLongClickListener mLongClickListener;
+    OnClickListener mOnClickListener;
     private List<String> mItems;
 
-    public ItemsAdapter(List<String> items, OnLongClickListener longClickListener) {
-        this.mItems = items;
-        this.mLongClickListener = longClickListener;
-    }
-
-    public interface OnLongClickListener {
-        void onItemLongClicked(int position);
+    public ItemsAdapter(List<String> items, OnLongClickListener longClickListener, OnClickListener onClickListener) {
+        mLongClickListener = longClickListener;
+        mOnClickListener = onClickListener;
+        mItems = items;
     }
 
     @NonNull
@@ -47,6 +45,14 @@ class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> {
         return mItems.size();
     }
 
+    public interface OnLongClickListener {
+        void onItemLongClicked(int position);
+    }
+
+    public interface OnClickListener {
+        void onItemClicked(int position);
+    }
+
     // Container to provide easy access to views that represent each row of the list
     class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -60,6 +66,12 @@ class ItemsAdapter extends RecyclerView.Adapter<ItemsAdapter.ViewHolder> {
         // Update the view inside of the view holder with this data
         public void bind(String item) {
             tvItem.setText(item);
+            tvItem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mOnClickListener.onItemClicked(getAdapterPosition());
+                }
+            });
             tvItem.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {

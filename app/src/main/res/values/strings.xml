@@ -4,4 +4,7 @@
     <string name="add_and_item_here">Add and Item here</string>
     <string name="item_added">Item was added</string>
     <string name="item_removed">Item was removed</string>
+    <string name="update_the_item">Update the item</string>
+    <string name="save">Save</string>
+    <string name="edit_item">Edit item</string>
 </resources>
